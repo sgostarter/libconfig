@@ -1,4 +1,4 @@
-package confige
+package libconfig
 
 import (
 	"strings"
