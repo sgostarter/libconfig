@@ -7,7 +7,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-func Load(configName string, cfg interface{}) (configFileUsed string, err error) {
+func LoadOnConfigPath(configName string, configPaths []string, cfg interface{}) (configFileUsed string, err error) {
 	v := viper.NewWithOptions(viper.KeyDelimiter("::"))
 	v.SetDefault("chart::values", map[string]interface{}{
 		"ingress": map[string]interface{}{
@@ -26,6 +26,10 @@ func Load(configName string, cfg interface{}) (configFileUsed string, err error)
 		v.SetConfigType(configName[sp+1:])
 	}
 
+	for _, path := range configPaths {
+		v.AddConfigPath(path)
+	}
+
 	err = v.ReadInConfig()
 	if err != nil {
 		return
@@ -40,4 +44,10 @@ func Load(configName string, cfg interface{}) (configFileUsed string, err error)
 	}
 
 	return
+}
+
+func Load(configName string, cfg interface{}) (configFileUsed string, err error) {
+	return LoadOnConfigPath(configName, []string{
+		"./", "./config/", "../", "../config/", "../../", "../../config/",
+	}, cfg)
 }
