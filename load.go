@@ -25,12 +25,12 @@ func searchConfigFile(fileName string, configPaths []string) string {
 }
 
 func LoadOnConfigPath(configName string, configPaths []string, cfg interface{}) (configFileUsed string, err error) {
+	_ = envconfig.Process("", cfg)
+
 	configFileUsed = searchConfigFile(configName, configPaths)
 	if configFileUsed == "" {
 		return
 	}
-
-	_ = envconfig.Process("", cfg)
 
 	f, err := os.Open(configFileUsed)
 	if err != nil {
