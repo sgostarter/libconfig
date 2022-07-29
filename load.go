@@ -27,7 +27,10 @@ func searchConfigFile(fileName string, configPaths []string) string {
 func LoadOnConfigPath(configName string, configPaths []string, cfg interface{}) (configFileUsed string, err error) {
 	_ = envconfig.Process("", cfg)
 
-	configFileUsed = searchConfigFile(configName, configPaths)
+	allConfigPaths, _ := GetDefaultAppConfigRoot()
+	allConfigPaths = append(allConfigPaths, configPaths...)
+
+	configFileUsed = searchConfigFile(configName, allConfigPaths)
 	if configFileUsed == "" {
 		return
 	}
