@@ -6,8 +6,15 @@ import (
 	"github.com/sgostarter/libconfig"
 )
 
+const (
+	defaultUTConfig = "ut.yaml"
+
+	CfgItemRedis = 0x01
+	CfgItemMySQL = 0x02
+)
+
 func SetupUTConfig() *Config {
-	return SetupUTConfigEx("ut.yaml", nil)
+	return SetupUTConfigEx(defaultUTConfig, nil)
 }
 
 func SetupUTConfigEx(fileName string, configPaths []string) *Config {
@@ -29,15 +36,46 @@ func SetupUTConfigEx(fileName string, configPaths []string) *Config {
 }
 
 func SetupUTConfig4Redis(t *testing.T) *Config {
-	return SetupUTConfig4RedisEx("ut.yaml", nil, t)
+	return SetupUTConfig4RedisEx(defaultUTConfig, nil, t)
 }
 
 func SetupUTConfig4RedisEx(fileName string, configPaths []string, t *testing.T) *Config {
 	cfg := SetupUTConfigEx(fileName, configPaths)
-	if cfg == nil || cfg.RedisDNS == "" {
+	if cfg == nil || cfg.RedisDSN == "" {
 		t.SkipNow()
 
 		return nil
+	}
+
+	return cfg
+}
+
+func SetupAndCheckUTConfig(checkItems int, t *testing.T) *Config {
+	return SetupUTConfig4RedisEx(defaultUTConfig, nil, t)
+}
+
+func SetupAndCheckUTConfigGetEx(fileName string, configPaths []string, checkItems int, t *testing.T) *Config {
+	cfg := SetupUTConfigEx(fileName, configPaths)
+	if cfg == nil {
+		t.SkipNow()
+
+		return nil
+	}
+
+	if checkItems&CfgItemRedis == CfgItemRedis {
+		if cfg.RedisDSN == "" {
+			t.SkipNow()
+
+			return nil
+		}
+	}
+
+	if checkItems&CfgItemMySQL == CfgItemMySQL {
+		if cfg.MysqlDSN == "" {
+			t.SkipNow()
+
+			return nil
+		}
 	}
 
 	return cfg
