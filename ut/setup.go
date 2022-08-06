@@ -51,7 +51,7 @@ func SetupUTConfig4RedisEx(fileName string, configPaths []string, t *testing.T) 
 }
 
 func SetupAndCheckUTConfig(checkItems int, t *testing.T) *Config {
-	return SetupUTConfig4RedisEx(defaultUTConfig, nil, t)
+	return SetupAndCheckUTConfigGetEx(defaultUTConfig, nil, checkItems, t)
 }
 
 func SetupAndCheckUTConfigGetEx(fileName string, configPaths []string, checkItems int, t *testing.T) *Config {
