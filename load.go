@@ -33,6 +33,16 @@ func LoadOnConfigPath(configName string, configPaths []string, cfg interface{}) 
 	allConfigPaths = append(allConfigPaths, configPaths...)
 	allConfigPaths = append(allConfigPaths, defaultConfigPaths...)
 
+	for _, configPath := range configPaths {
+		if path.IsAbs(configPath) {
+			continue
+		}
+
+		for _, defaultConfigPath := range defaultConfigPaths {
+			allConfigPaths = append(allConfigPaths, path.Join(defaultConfigPath, configPath))
+		}
+	}
+
 	configFileUsed = searchConfigFile(configName, allConfigPaths)
 	if configFileUsed == "" {
 		return
